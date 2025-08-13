@@ -32,6 +32,12 @@
                 <option value="manual">Manual</option>
             </select>
             </div>
+            <div class="field">
+
+              <!-- Input for Tomcat port -->
+              <label for="tomcatPort">Port</label>
+              <input id="tomcatPort" name="tomcatPort" type="number" value="8080" min="1024" max="65535" autocomplete="off"/>
+            </div>
         </div>
       <div class="row">
         <div class="field">
@@ -40,55 +46,24 @@
           <label for="installLocation">Install location</label>
           <input id="installLocation" name="installLocation" type="text" placeholder="e.g /usr/local/opt/tomcat/libexec" autocomplete="off" required/>
         </div>
-        <div class="controls">
-
-          <!-- Start and Stop buttons -->
-          <button type="button" class="btn btn-start" id="btnStart">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M8 5v14l11-7-11-7z"></path>
-            </svg>
-            Start
-          </button>
-          <button type="button" class="btn btn-stop" id="btnStop">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M6 6h12v12H6z"></path>
-            </svg>
-            Stop
-          </button>
-        </div>
       </div>
 
       <div class="footer">
-        <row>
-          <button id="openLog">View Logs</button>
-          <script>
-            document.getElementById('openLog').addEventListener('click', () => {
-              const installPath = document.getElementById('installLocation').value.trim();
-              const type = document.getElementById('installType').value.trim().toLowerCase();
+        <div class="controls">
 
-              // Get today's date in YYYY-MM-DD format
-              const today = new Date();
-              const yyyy = today.getFullYear();
-              const mm = String(today.getMonth() + 1).padStart(2, '0');
-              const dd = String(today.getDate()).padStart(2, '0');
-              const dateString = `${yyyy}-${mm}-${dd}`;
-
-              let logPath;
-              if (type === 'homebrew') {
-                // For Homebrew, the log path is fixed but uses the date
-                logPath = `/usr/local/opt/tomcat/libexec/logs/catalina.${dateString}.log`;
-              } else if (type === 'manual' && installPath) {
-                // For manual installs, construct the log path based on user input and date
-                logPath = (installPath.endsWith('/') ? installPath : installPath + '/') + `logs/catalina.${dateString}.log`;
-              } else {
-                alert('Please provide a valid Tomcat install path.');
-                return;
-              }
-
-              window.api.openLogWindow(logPath);
-            });
-          </script>
-        </row>
+          <!-- Start and Stop buttons -->
+          <button type="button" class="control-button start-button" id="btnStart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960"><path d="M320-200v-560l440 280zm80-146 210-134-210-134z"/></svg>
+          </button>
+          <button type="button" class="control-button stop-button" id="btnStop">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960"><path d="M320-640v320zm-80 400v-480h480v480zm80-80h320v-320H320z"/></svg>
+          </button>
+          <button type="button" class="control-button log-button" id="openLog">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-code" viewBox="0 0 16 16">
+              <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8z"/>
+            </svg>
+          </button>
+        </div>
 
         <span class="status" id="status" aria-live="polite">
           <span class="status-dot" aria-hidden="true"></span>
@@ -136,24 +111,53 @@
     document.getElementById('btnStart').addEventListener('click', () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();
+      const port = document.getElementById('tomcatPort').value.trim();
       if (type === 'manual' && !path) {
         setStatus('Manual mode requires install location', '');
         return;
       }
       setStatus('Starting Server…', 'ok');
-      window.api.startTomcat(path, type);
+      window.api.startTomcat(path, type, port);
     });
 
     // Stop button handler: validates input and sends stop command to backend
     document.getElementById('btnStop').addEventListener('click', () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();
+      const port = document.getElementById('tomcatPort').value.trim();
       if (type === 'manual' && !path) {
         setStatus('Manual mode requires install location', '');
         return;
       }
       setStatus('Stopping Server…', 'bad');
-      window.api.stopTomcat(path, type);
+      window.api.stopTomcat(path, type, port);
+    });
+
+    // Log button handler: opens log window with appropriate path
+    document.getElementById('openLog').addEventListener('click', () => {
+      const installPath = document.getElementById('installLocation').value.trim();
+      const type = document.getElementById('installType').value.trim().toLowerCase();
+
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const dateString = `${yyyy}-${mm}-${dd}`;
+
+      let logPath;
+      if (type === 'homebrew') {
+        // For Homebrew, the log path is fixed but uses the date
+        logPath = `/usr/local/opt/tomcat/libexec/logs/catalina.${dateString}.log`;
+      } else if (type === 'manual' && installPath) {
+        // For manual installs, construct the log path based on user input and date
+        logPath = (installPath.endsWith('/') ? installPath : installPath + '/') + `logs/catalina.${dateString}.log`;
+      } else {
+        alert('Please provide a valid Tomcat install path.');
+        return;
+      }
+
+      window.api.openLogWindow(logPath);
     });
   </script>
 

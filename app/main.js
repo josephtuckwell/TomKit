@@ -3,6 +3,30 @@ const path = require('path');
 const { execFile, spawn } = require('child_process');
 const fs = require('fs');
 
+// Function to update Tomcat port in server.xml
+async function updateTomcatPort(installPath, port) {
+  const serverXmlPath = path.join(installPath, 'conf', 'server.xml');
+  
+  if (!fs.existsSync(serverXmlPath)) {
+    throw new Error(`server.xml not found at ${serverXmlPath}`);
+  }
+
+  try {
+    const data = fs.readFileSync(serverXmlPath, 'utf8');
+    
+    // Replace the HTTP connector port (find the first HTTP connector)
+    const updatedData = data.replace(
+      /<Connector\s+port="\d+"\s+protocol="HTTP\/1\.1"/,
+      `<Connector port="${port}" protocol="HTTP/1.1"`
+    );
+    
+    fs.writeFileSync(serverXmlPath, updatedData);
+    console.log(`Updated Tomcat port to ${port} in ${serverXmlPath}`);
+  } catch (error) {
+    throw new Error(`Failed to update server.xml: ${error.message}`);
+  }
+}
+
 let tailProcess = null;
 // Create the main application window
 const createWindow = () => {
@@ -33,9 +57,25 @@ app.on('window-all-closed', () => {
 })
 
 // Handle "start-tomcat" requests from the renderer process
-ipcMain.handle('start-tomcat', async (event, installPath, type) => {
+ipcMain.handle('start-tomcat', async (event, installPath, type, port) => {
   let scriptPath = '';
   let args;
+
+  // If a custom port is specified, update server.xml before starting
+  if (port && port !== '') {
+    try {
+      if (type === 'homebrew') 
+      {
+        installPath = path.join(installPath, '/', 'usr', 'local', 'opt', 'tomcat', 'libexec');
+      }
+
+      console.log(`Updating Tomcat port to ${port} in ${installPath}`);
+      await updateTomcatPort(installPath, port);
+    } catch (error) {
+      console.error('Error updating Tomcat port:', error);
+      return;
+    }
+  }
 
   // If using Homebrew, start Tomcat as a service
   if (type === 'homebrew') {
@@ -60,7 +100,7 @@ ipcMain.handle('start-tomcat', async (event, installPath, type) => {
 });
 
 // Handle "stop-tomcat" requests from the renderer process
-ipcMain.handle('stop-tomcat', async (event, installPath, type) => {
+ipcMain.handle('stop-tomcat', async (event, installPath, type, port) => {
   let scriptPath = '';
   let args;
 

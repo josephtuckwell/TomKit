@@ -90,9 +90,14 @@
 
     .row {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
+      grid-template-columns: auto auto;
+      gap: 16px;
       align-items: end;
+      justify-content: start;
+    }
+
+    .row:has(.field:only-child) {
+      grid-template-columns: 1fr;
     }
 
     .field {
@@ -105,7 +110,7 @@
       color: var(--muted);
     }
 
-    input[type="text"], input[type="search"] {
+    input[type="text"], input[type="search"], input[type="number"] {
       width: 100%;
       border: 1px solid rgba(255,255,255,0.14);
       border-color: color-mix(in srgb, var(--muted) 32%, transparent);
@@ -116,6 +121,24 @@
       border-radius: 12px;
       outline: none;
       transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    /* Remove number input arrows */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    /* Port field specific styling */
+    .field input#tomcatPort {
+      max-width: 120px;
+      width: auto;
     }
 
     input::placeholder { color: color-mix(in srgb, var(--muted) 75%, transparent); }
@@ -130,47 +153,6 @@
       display: grid;
       grid-auto-flow: column;
       gap: 10px;
-    }
-
-    .btn {
-      appearance: none;
-      -webkit-tap-highlight-color: transparent;
-      cursor: pointer;
-      padding: 11px 16px;
-      border-radius: 12px;
-      border: 1px solid transparent;
-      font-weight: 650;
-      letter-spacing: 0.2px;
-      transition: transform .04s ease, filter .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      user-select: none;
-    }
-
-    .btn:active { transform: translateY(1px); }
-
-    .btn-start {
-      background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 20%, transparent), transparent 50%); 
-      background-color: color-mix(in srgb, var(--ok) 75%, transparent);
-      border-color: color-mix(in srgb, var(--ok) 45%, transparent);
-      box-shadow: 0 8px 18px rgba(29, 185, 84, 0.25);
-      color: #071b0f;
-    }
-    .btn-start:hover { filter: brightness(1.02); }
-
-    .btn-stop {
-      background: linear-gradient(180deg, color-mix(in srgb, var(--danger) 18%, transparent), transparent 55%);
-      background-color: color-mix(in srgb, var(--danger) 70%, transparent);
-      border-color: color-mix(in srgb, var(--danger) 45%, transparent);
-      box-shadow: 0 8px 18px rgba(255, 93, 93, 0.25);
-      color: #2a0707;
-    }
-    .btn-stop:hover { filter: brightness(1.02); }
-
-    .btn:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--ring) 28%, transparent);
     }
 
     .field select#installType {
@@ -212,7 +194,7 @@
       background-size: 18px 18px;
     }
 
-      .field select#installType:disabled {
+    .field select#installType:disabled {
     background: color-mix(in srgb, var(--muted) 12%, var(--card));
     color: color-mix(in srgb, var(--muted) 70%, white 30%);
     border-color: color-mix(in srgb, var(--muted) 40%, transparent);
@@ -222,6 +204,15 @@
   }
 
   .field input#installLocation:disabled {
+    background: color-mix(in srgb, var(--muted) 12%, var(--card));
+    color: color-mix(in srgb, var(--muted) 70%, white 30%);
+    border-color: color-mix(in srgb, var(--muted) 40%, transparent);
+    cursor: not-allowed;
+    opacity: 0.7;
+    filter: grayscale(0.3);
+  }
+
+  .field input#tomcatPort:disabled {
     background: color-mix(in srgb, var(--muted) 12%, var(--card));
     color: color-mix(in srgb, var(--muted) 70%, white 30%);
     border-color: color-mix(in srgb, var(--muted) 40%, transparent);
@@ -263,28 +254,54 @@
       body { background: var(--bg); }
     }
 
-    #openLog {
-  appearance: none;
-  background: linear-gradient(90deg, #6ea8fe 0%, #8fd3ff 100%);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  box-shadow: 0 4px 16px rgba(110,168,254,0.10);
+button {
   cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s, transform 0.08s;
-  margin: 0 0 0 8px;
-  outline: none;
-  display: inline-flex;
+  font-weight: 500;
+  transition: all 0.2s;
+  padding: 10px 10px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  font-size: 12px;
 }
 
-#openLog:hover, #openLog:focus-visible {
-  background: linear-gradient(90deg, #8fd3ff 0%, #6ea8fe 100%);
-  box-shadow: 0 6px 24px rgba(110,168,254,0.18);
-  transform: translateY(-2px) scale(1.03);
+  .start-button   { background-color: #78ff98; } /* Green */
+  .stop-button    { background-color: #ff6f7d; } /* Red */
+  .log-button    { background-color: #74b7ff; } /* Blue */
+
+  .start-button:hover   { background-color: #28a745; } /* Green */
+  .stop-button:hover    { background-color: #dc3545; } /* Red */
+  .log-button:hover    { background-color: #007bff; } /* Blue */
+
+
+.btn-github {
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  border: none;
+
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border-radius: 100px;
+  font-weight: 800;
+  place-content: center;
+
+  padding: 0.75rem 1rem;
+  font-size: 0.825rem;
+  line-height: 1rem;
+
+  background-color: rgba(0, 0, 0, 0.4);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  color: #fff;
+}
+
+.btn-github:hover {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(252, 232, 3, 0.08);
+  color: #fce803;
+  transform: translate(0, -0.25rem);
+  background-color: rgba(0, 0, 0, 0.5);
 }
