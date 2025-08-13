@@ -38,7 +38,7 @@
 
           <!-- Input for Tomcat install location -->
           <label for="installLocation">Install location</label>
-          <input id="installLocation" name="installLocation" type="text" placeholder="e.g /opt/tomcat" autocomplete="off" required/>
+          <input id="installLocation" name="installLocation" type="text" placeholder="e.g /usr/local/opt/tomcat/libexec" autocomplete="off" required/>
         </div>
         <div class="controls">
 
@@ -59,9 +59,37 @@
       </div>
 
       <div class="footer">
+        <row>
+          <button id="openLog">View Logs</button>
+          <script>
+            document.getElementById('openLog').addEventListener('click', () => {
+              const installPath = document.getElementById('installLocation').value.trim();
+              const type = document.getElementById('installType').value.trim().toLowerCase();
 
-        <!-- Hint for the user and status display -->
-        <span class="hint">Provide the Tomcat install path, then start or stop the service.</span>
+              // Get today's date in YYYY-MM-DD format
+              const today = new Date();
+              const yyyy = today.getFullYear();
+              const mm = String(today.getMonth() + 1).padStart(2, '0');
+              const dd = String(today.getDate()).padStart(2, '0');
+              const dateString = `${yyyy}-${mm}-${dd}`;
+
+              let logPath;
+              if (type === 'homebrew') {
+                // For Homebrew, the log path is fixed but uses the date
+                logPath = `/usr/local/opt/tomcat/libexec/logs/catalina.${dateString}.log`;
+              } else if (type === 'manual' && installPath) {
+                // For manual installs, construct the log path based on user input and date
+                logPath = (installPath.endsWith('/') ? installPath : installPath + '/') + `logs/catalina.${dateString}.log`;
+              } else {
+                alert('Please provide a valid Tomcat install path.');
+                return;
+              }
+
+              window.api.openLogWindow(logPath);
+            });
+          </script>
+        </row>
+
         <span class="status" id="status" aria-live="polite">
           <span class="status-dot" aria-hidden="true"></span>
           Idle

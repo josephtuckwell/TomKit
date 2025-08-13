@@ -1,7 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { execFile } = require('child_process');
+const { execFile, spawn } = require('child_process');
+const fs = require('fs');
 
+let tailProcess = null;
 // Create the main application window
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -36,14 +38,16 @@ ipcMain.handle('start-tomcat', async (event, installPath, type) => {
   let args;
 
   // If using Homebrew, start Tomcat as a service
-  if (type !== 'Homebrew') {
+  if (type === 'homebrew') {
     scriptPath = 'brew';
     args = ['services', 'start', 'tomcat'];
   } else {
-    // Otherwise, run the startup.sh script from the manual install path
-    scriptPath = path.join(installPath, 'startup.sh');
+    // Otherwise, run the startup.sh in the bin dir from the manual install path
+    scriptPath = path.join(installPath, 'bin', 'startup.sh');
     args = [];
   }
+
+  console.log('Attempting to start Tomcat with:', scriptPath);
 
   // Execute the appropriate command/script
   execFile(scriptPath, args, (error, stdout, stderr) => {
@@ -51,7 +55,7 @@ ipcMain.handle('start-tomcat', async (event, installPath, type) => {
       console.error('Error starting Tomcat:', error);
       return;
     }
-    console.log('Tomcat started:', stdout);
+    console.log(stdout);
   });
 });
 
@@ -61,14 +65,16 @@ ipcMain.handle('stop-tomcat', async (event, installPath, type) => {
   let args;
 
   // If using Homebrew, stop Tomcat as a service
-  if (type !== 'Homebrew') {
+  if (type === 'homebrew') {
     scriptPath = 'brew';
     args = ['services', 'stop', 'tomcat'];
   } else {
-    // Otherwise, run the shutdown.sh script from the manual install path
-    scriptPath = path.join(installPath, 'shutdown.sh');
+    // Otherwise, run the shutdown.sh from bin dir in manual install path
+    scriptPath = path.join(installPath, 'bin', 'shutdown.sh');
     args = [];
   }
+
+  console.log('Attempting to stop Tomcat with:', scriptPath);
 
   // Execute the appropriate command/script
   execFile(scriptPath, args, (error, stdout, stderr) => {
@@ -76,6 +82,63 @@ ipcMain.handle('stop-tomcat', async (event, installPath, type) => {
       console.error('Error stopping Tomcat:', error);
       return;
     }
-    console.log('Tomcat stopped:', stdout);
+    console.log(stdout);
+  });
+});
+
+// Stop tailing when renderer requests
+ipcMain.on('stop-tail-catalina', () => {
+  if (tailProcess) {
+    tailProcess.kill();
+    tailProcess = null;
+  }
+});
+
+let logWindow = null;
+let logTailProcess = null;
+
+ipcMain.on('open-log-window', (event, logPath) => {
+  if (logWindow) {
+    logWindow.focus();
+    return;
+  }
+  logWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+  logWindow.loadFile('log.html');
+  logWindow.on('closed', () => {
+    logWindow = null;
+    if (logTailProcess) {
+      logTailProcess.kill();
+      logTailProcess = null;
+    }
+  });
+
+  logWindow.webContents.on('did-finish-load', () => {
+    if (logTailProcess) {
+      logTailProcess.kill();
+      logTailProcess = null;
+    }
+    if (!fs.existsSync(logPath)) {
+      logWindow.webContents.send('catalina-data', '[Log file does not exist]');
+      return;
+    }
+    logTailProcess = spawn('tail', ['-n', '100', '-f', logPath]);
+    logTailProcess.stdout.on('data', (data) => {
+      logWindow.webContents.send('catalina-data', data.toString());
+    });
+    logTailProcess.stderr.on('data', (data) => {
+      logWindow.webContents.send('catalina-data', '[stderr] ' + data.toString());
+    });
+    logTailProcess.on('close', () => {
+      if (logWindow) logWindow.webContents.send('catalina-data', '[tail stopped]');
+    });
+    logTailProcess.on('error', (err) => {
+      console.error('Tail process error:', err);
+    });
   });
 });

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Catalina Log</title>
+  <style>
+    body { background: #181818; color: #eee; margin: 0; font-family: monospace; }
+    #log { white-space: pre-wrap; padding: 16px; height: 100vh; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <pre id="log">Loading...</pre>
+  <script>
+    window.api.onCatalinaData(data => {
+      const log = document.getElementById('log');
+      log.textContent += data;
+      log.scrollTop = log.scrollHeight;
+    });
+
+    window.api.onStartTail((logPath) => {
+  window.api.tailCatalina(logPath);
+});
+  </script>
+</body>
+</html>
