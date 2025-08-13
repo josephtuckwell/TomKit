@@ -44,4 +44,4 @@ npm start
 
 **Note:**  
 - For Homebrew mode, Tomcat must be installed via Homebrew and available as a service.
-- For Manual mode, ensure the `startup.sh` and `shutdown.sh` scripts are present and executable in the specified directory.
+- For Manual mode, ensure the `startup.sh` and `shutdown.sh` scripts are present and executable in the bin folder of specified directory.
