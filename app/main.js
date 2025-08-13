@@ -101,7 +101,6 @@ ipcMain.handle('start-tomcat', async (event, installPath, type, port) => {
 
   console.log('Attempting to start Tomcat with:', scriptPath);
 
-  // Execute the appropriate command/script
   return new Promise((resolve, reject) => {
     execFile(scriptPath, args, (error, stdout, stderr) => {
       if (error) {
