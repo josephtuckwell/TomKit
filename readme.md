@@ -19,19 +19,11 @@ TomKit is a simple Electron-based tool for managing Apache Tomcat installations 
    npm install
    ```
 
-## Build
-
-If you are using TypeScript, build the project with:
-```sh
-npm run build
-```
-If you are using only JavaScript, you can skip this step.
-
 ## Run
 
 Start the app with:
 ```sh
-npm start
+npm run start
 ```
 
 ## Usage
