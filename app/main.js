@@ -14,7 +14,7 @@ const createWindow = () => {
   })
 
   // Load the main HTML file
-  win.loadFile('index.html')
+  win.loadFile('public/index.html')
 }
 
 // Called when Electron has finished initialization
@@ -109,7 +109,7 @@ ipcMain.on('open-log-window', (event, logPath) => {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-  logWindow.loadFile('log.html');
+  logWindow.loadFile('public/log.html');
   logWindow.on('closed', () => {
     logWindow = null;
     if (logTailProcess) {
