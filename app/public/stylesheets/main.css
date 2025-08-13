@@ -71,8 +71,8 @@
       place-items: center;
       width: 32px; height: 32px;
       border-radius: 10px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      box-shadow: inset 0 0 10px rgba(255,255,255,0.25), 0 6px 18px rgba(96, 165, 250, 0.35);
+      background: linear-gradient(135deg, #F9C23C, #D73027);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.25), 0 6px 18px rgba(249, 194, 60, 0.35);
     }
 
     .subtitle {
@@ -245,6 +245,19 @@
       justify-content: space-between;
       gap: 12px;
       margin-top: 10px;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .version {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.7;
+      font-weight: 500;
     }
 
     .hint { color: var(--muted); font-size: 13px; }

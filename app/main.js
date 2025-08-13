@@ -3,6 +3,18 @@ const path = require('path');
 const { execFile, spawn } = require('child_process');
 const fs = require('fs');
 
+// Get version from package.json
+function getAppVersion() {
+  try {
+    const packagePath = path.join(__dirname, 'package.json');
+    const packageData = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+    return packageData.version;
+  } catch (error) {
+    console.error('Error reading version from package.json:', error);
+    return '0.0.0';
+  }
+}
+
 // Function to update Tomcat port in server.xml
 async function updateTomcatPort(installPath, port) {
   const serverXmlPath = path.join(installPath, 'conf', 'server.xml');
@@ -124,6 +136,11 @@ ipcMain.handle('stop-tomcat', async (event, installPath, type, port) => {
     }
     console.log(stdout);
   });
+});
+
+// Handle version request
+ipcMain.handle('get-app-version', async () => {
+  return getAppVersion();
 });
 
 // Stop tailing when renderer requests

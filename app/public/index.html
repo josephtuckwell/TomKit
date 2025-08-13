@@ -17,6 +17,7 @@
         </span>
         TomKit
       </h1>
+        <span class="version" id="version">v0.0.0</span>
       <p class="subtitle">Tomcat configuration</p>
     </header>
 
@@ -65,10 +66,12 @@
           </button>
         </div>
 
-        <span class="status" id="status" aria-live="polite">
-          <span class="status-dot" aria-hidden="true"></span>
-          Idle
-        </span>
+        <div class="footer-right">
+          <span class="status" id="status" aria-live="polite">
+            <span class="status-dot" aria-hidden="true"></span>
+            Idle
+          </span>
+        </div>
       </div>
     </form>
   </main>
@@ -79,6 +82,15 @@
       const elStatus = document.getElementById('status');
       const installType = document.getElementById('installType');
       const installLocation = document.getElementById('installLocation');
+      const versionElement = document.getElementById('version');
+
+      // Load version from package.json
+      window.api.getAppVersion().then(version => {
+        versionElement.textContent = `v${version}`;
+      }).catch(error => {
+        console.error('Failed to load version:', error);
+        versionElement.textContent = 'v0.0.0';
+      });
 
       // Update the status display
       const setStatus = (label, kind) => {
