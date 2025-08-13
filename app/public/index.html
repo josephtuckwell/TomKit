@@ -71,6 +71,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             Idle
           </span>
+          <span class="version" id="version">v0.0.0</span>
         </div>
       </div>
     </form>
@@ -120,7 +121,7 @@
   }
 
    // Start button handler: validates input and sends start command to backend
-    document.getElementById('btnStart').addEventListener('click', () => {
+    document.getElementById('btnStart').addEventListener('click', async () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();
       const port = document.getElementById('tomcatPort').value.trim();
@@ -128,12 +129,24 @@
         setStatus('Manual mode requires install location', '');
         return;
       }
+      
       setStatus('Starting Server…', 'ok');
-      window.api.startTomcat(path, type, port);
+      
+      try {
+        const result = await window.api.startTomcat(path, type, port);
+        if (result.success) {
+          setStatus('Server running', 'ok');
+        } else {
+          setStatus('Failed to start server', 'bad');
+        }
+      } catch (error) {
+        console.error('Error starting Tomcat:', error);
+        setStatus('Failed to start server', 'bad');
+      }
     });
 
     // Stop button handler: validates input and sends stop command to backend
-    document.getElementById('btnStop').addEventListener('click', () => {
+    document.getElementById('btnStop').addEventListener('click', async () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();
       const port = document.getElementById('tomcatPort').value.trim();
@@ -141,8 +154,20 @@
         setStatus('Manual mode requires install location', '');
         return;
       }
+      
       setStatus('Stopping Server…', 'bad');
-      window.api.stopTomcat(path, type, port);
+      
+      try {
+        const result = await window.api.stopTomcat(path, type, port);
+        if (result.success) {
+          setStatus('Server stopped', 'bad');
+        } else {
+          setStatus('Failed to stop server', 'bad');
+        }
+      } catch (error) {
+        console.error('Error stopping Tomcat:', error);
+        setStatus('Failed to stop server', 'bad');
+      }
     });
 
     // Log button handler: opens log window with appropriate path

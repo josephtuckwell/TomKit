@@ -102,12 +102,16 @@ ipcMain.handle('start-tomcat', async (event, installPath, type, port) => {
   console.log('Attempting to start Tomcat with:', scriptPath);
 
   // Execute the appropriate command/script
-  execFile(scriptPath, args, (error, stdout, stderr) => {
-    if (error) {
-      console.error('Error starting Tomcat:', error);
-      return;
-    }
-    console.log(stdout);
+  return new Promise((resolve, reject) => {
+    execFile(scriptPath, args, (error, stdout, stderr) => {
+      if (error) {
+        console.error('Error starting Tomcat:', error);
+        reject({ success: false, error: error.message });
+      } else {
+        console.log('Tomcat started successfully:', stdout);
+        resolve({ success: true, message: 'Server started successfully' });
+      }
+    });
   });
 });
 
@@ -129,12 +133,16 @@ ipcMain.handle('stop-tomcat', async (event, installPath, type, port) => {
   console.log('Attempting to stop Tomcat with:', scriptPath);
 
   // Execute the appropriate command/script
-  execFile(scriptPath, args, (error, stdout, stderr) => {
-    if (error) {
-      console.error('Error stopping Tomcat:', error);
-      return;
-    }
-    console.log(stdout);
+  return new Promise((resolve, reject) => {
+    execFile(scriptPath, args, (error, stdout, stderr) => {
+      if (error) {
+        console.error('Error stopping Tomcat:', error);
+        reject({ success: false, error: error.message });
+      } else {
+        console.log('Tomcat stopped successfully:', stdout);
+        resolve({ success: true, message: 'Server stopped successfully' });
+      }
+    });
   });
 });
 
