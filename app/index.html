@@ -11,7 +11,6 @@
     <header class="header">
       <h1 class="title" id="title">
         <span class="spark" aria-hidden="true">
-          <!-- minimalist spark icon -->
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 2v6M12 16v6M2 12h6M16 12h6M5.64 5.64l4.24 4.24M14.12 14.12l4.24 4.24M18.36 5.64l-4.24 4.24M9.88 14.12L5.64 18.36" stroke="white" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -21,9 +20,12 @@
       <p class="subtitle">Tomcat configuration</p>
     </header>
 
+     <!-- Main form for user input -->
     <form id="tomkit-form" action="#" method="post" novalidate>
         <div class="row">
             <div class="field">
+
+              <!-- Dropdown to select install mode -->
             <label for="installType">Install mode</label>
             <select id="installType" name="installType">
                 <option value="homebrew">Homebrew</option>
@@ -33,10 +35,14 @@
         </div>
       <div class="row">
         <div class="field">
+
+          <!-- Input for Tomcat install location -->
           <label for="installLocation">Install location</label>
           <input id="installLocation" name="installLocation" type="text" placeholder="e.g /opt/tomcat" autocomplete="off" required/>
         </div>
         <div class="controls">
+
+          <!-- Start and Stop buttons -->
           <button type="button" class="btn btn-start" id="btnStart">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7-11-7z"></path>
@@ -53,6 +59,8 @@
       </div>
 
       <div class="footer">
+
+        <!-- Hint for the user and status display -->
         <span class="hint">Provide the Tomcat install path, then start or stop the service.</span>
         <span class="status" id="status" aria-live="polite">
           <span class="status-dot" aria-hidden="true"></span>
@@ -63,11 +71,14 @@
   </main>
 
   <script>
+
+     // Get references to DOM elements
       const elStatus = document.getElementById('status');
       const installType = document.getElementById('installType');
       const installLocation = document.getElementById('installLocation');
 
-    const setStatus = (label, kind) => {
+      // Update the status display
+      const setStatus = (label, kind) => {
       elStatus.textContent = '';
       const dot = document.createElement('span');
       dot.className = 'status-dot';
@@ -77,7 +88,7 @@
       elStatus.append(' ', label);
     };
 
-  // Enable/disable install location based on type
+  // Enable/disable install location based on install type selection
   installType.addEventListener('change', () => {
     if (installType.value === 'homebrew') {
       installLocation.disabled = true;
@@ -87,12 +98,13 @@
     }
   });
 
-  // Set initial state on page load
+  // Set initial state for install location field on page load
   if (installType.value === 'homebrew') {
     installLocation.disabled = true;
     installLocation.value = '';
   }
 
+   // Start button handler: validates input and sends start command to backend
     document.getElementById('btnStart').addEventListener('click', () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();
@@ -104,6 +116,7 @@
       window.api.startTomcat(path, type);
     });
 
+    // Stop button handler: validates input and sends stop command to backend
     document.getElementById('btnStop').addEventListener('click', () => {
       const path = document.getElementById('installLocation').value.trim();
       const type = document.getElementById('installType').value.trim().toLowerCase();

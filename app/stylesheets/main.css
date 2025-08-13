@@ -258,7 +258,6 @@
 
     .hint { color: var(--muted); font-size: 13px; }
 
-    /* Reduce motion preference */
     @media (prefers-reduced-motion: reduce) {
       .btn { transition: none; }
       body { background: var(--bg); }
