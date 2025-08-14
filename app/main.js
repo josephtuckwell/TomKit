@@ -3,6 +3,14 @@ const path = require('path');
 const { execFile, spawn } = require('child_process');
 const fs = require('fs');
 
+// Set the app name
+app.setName('TomKit');
+
+// Set app user model ID for Windows
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.josephtuckwell.tomkit');
+}
+
 // Get version from package.json
 function getAppVersion() {
   try {
@@ -43,6 +51,11 @@ let tailProcess = null;
 // Create the main application window
 const createWindow = () => {
   const win = new BrowserWindow({
+    title: 'TomKit',
+    width: 600,
+    height: 400,
+    transparent: true,
+    frame: false,
     webPreferences: {
       // Preload script to securely expose APIs to renderer
       preload: path.join(__dirname, 'preload.js')
