@@ -1,7 +1,7 @@
 {
   "name": "tomkit",
   "productName": "TomKit",
-  "version": "0.0.2a",
+  "version": "0.0.3",
   "description": "Simple tomcat configuration tool",
   "license": "ISC",
   "author": "josephtuckwell",
