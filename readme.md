@@ -1,5 +1,7 @@
 # TomKit
 
+![TomKit](app/public/TomKit.png)
+
 TomKit is a simple Electron-based tool for managing Apache Tomcat installations on your system. It allows you to start and stop Tomcat either as a Homebrew service or via a manual install path.
 
 ## Features
