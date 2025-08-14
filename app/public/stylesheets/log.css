@@ -83,6 +83,7 @@ body {
   -webkit-app-region: no-drag;
   flex-shrink: 0;
   min-width: fit-content;
+  margin-left: auto;
 }
 
 .search-btn {
@@ -95,6 +96,15 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .search-btn:hover {
