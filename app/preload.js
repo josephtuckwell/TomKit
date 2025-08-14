@@ -6,5 +6,6 @@ contextBridge.exposeInMainWorld('api', {
   openLogWindow: (logPath) => ipcRenderer.send('open-log-window', logPath),
   onCatalinaData: (callback) => ipcRenderer.on('catalina-data', (event, data) => callback(data)),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+  checkTomcatStatus: (path, type, port) => ipcRenderer.invoke('check-tomcat-status', path, type, port),
   quitApp: () => ipcRenderer.send('quit-app'),
 });

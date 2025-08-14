@@ -163,6 +163,34 @@ ipcMain.handle('get-app-version', async () => {
   return getAppVersion();
 });
 
+// Handle Tomcat status check
+ipcMain.handle('check-tomcat-status', async (event, installPath, type, port) => {
+  return new Promise((resolve) => {
+    // Check if Tomcat is running by attempting to connect to the specified port
+    const net = require('net');
+    const client = new net.Socket();
+    
+    const checkPort = port || '8080'; // Default to 8080 if no port specified
+    
+    client.setTimeout(2000); // 2 second timeout
+    
+    client.connect(checkPort, 'localhost', () => {
+      client.destroy();
+      resolve({ running: true, port: checkPort });
+    });
+    
+    client.on('error', () => {
+      client.destroy();
+      resolve({ running: false, port: checkPort });
+    });
+    
+    client.on('timeout', () => {
+      client.destroy();
+      resolve({ running: false, port: checkPort });
+    });
+  });
+});
+
 // Handle quit request
 ipcMain.on('quit-app', () => {
   app.quit();

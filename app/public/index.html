@@ -99,6 +99,31 @@
         versionElement.textContent = 'v0.0.0';
       });
 
+      // Function to check Tomcat status
+      const checkTomcatStatus = async () => {
+        const path = installLocation.value.trim();
+        const type = installType.value.trim().toLowerCase();
+        const port = document.getElementById('tomcatPort').value.trim();
+        
+        try {
+          const status = await window.api.checkTomcatStatus(path, type, port);
+          if (status.running) {
+            setStatus(`Running on port ${status.port}`, 'ok');
+          } else {
+            setStatus('Idle', '');
+          }
+        } catch (error) {
+          console.error('Error checking Tomcat status:', error);
+          setStatus('Status check failed', '');
+        }
+      };
+
+      // Check status when app loads
+      setTimeout(checkTomcatStatus, 1000);
+
+      // Check status every 10 seconds
+      setInterval(checkTomcatStatus, 10000);
+
       // Update the status display
       const setStatus = (label, kind) => {
       elStatus.textContent = '';
@@ -136,18 +161,19 @@
         return;
       }
       
-      setStatus('Starting Server…', 'ok');
+      setStatus('Starting...', 'ok');
       
       try {
         const result = await window.api.startTomcat(path, type, port);
         if (result.success) {
-          setStatus('Server running', 'ok');
+          // Check status after a brief delay to confirm
+          setTimeout(checkTomcatStatus, 2000);
         } else {
-          setStatus('Failed to start server', 'bad');
+          setStatus('Failed to start', 'bad');
         }
       } catch (error) {
         console.error('Error starting Tomcat:', error);
-        setStatus('Failed to start server', 'bad');
+        setStatus('Failed to start', 'bad');
       }
     });
 
@@ -161,18 +187,19 @@
         return;
       }
       
-      setStatus('Stopping Server…', 'bad');
+      setStatus('Stopping...', 'bad');
       
       try {
         const result = await window.api.stopTomcat(path, type, port);
         if (result.success) {
-          setStatus('Server stopped', 'bad');
+          // Check status after a brief delay to confirm
+          setTimeout(checkTomcatStatus, 2000);
         } else {
-          setStatus('Failed to stop server', 'bad');
+          setStatus('Failed to stop', 'bad');
         }
       } catch (error) {
         console.error('Error stopping Tomcat:', error);
-        setStatus('Failed to stop server', 'bad');
+        setStatus('Failed to stop', 'bad');
       }
     });
 
