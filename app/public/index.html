@@ -10,10 +10,8 @@
   <main class="card" role="region" aria-labelledby="title">
     <header class="header">
       <h1 class="title" id="title">
-        <span class="spark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 2v6M12 16v6M2 12h6M16 12h6M5.64 5.64l4.24 4.24M14.12 14.12l4.24 4.24M18.36 5.64l-4.24 4.24M9.88 14.12L5.64 18.36" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+        <span aria-hidden="true">
+        <img src="TomKit-icon.svg" alt="TomKit Icon" width="24" height="24">
         </span>
         TomKit
       <span class="version" id="version">v0.0.0</span>
@@ -24,6 +22,16 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <button type="button" class="settings-button" id="settingsButton" title="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 7h-9m3 10H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+      </button>
+
+      <button type="button" class="minimize-button" id="minimizeButton" title="Minimize">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
       </button>
 
@@ -61,17 +69,24 @@
         <div class="controls">
 
           <!-- Start and Stop buttons -->
-          <button type="button" class="control-button start-button" id="btnStart" title="Start Server">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960"><path d="M320-200v-560l440 280zm80-146 210-134-210-134z"/></svg>
+          <button type="button" class="start-button" id="btnStart" title="Start Server">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
           </button>
-          <button type="button" class="control-button stop-button" id="btnStop" title="Stop Server">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960"><path d="M320-640v320zm-80 400v-480h480v480zm80-80h320v-320H320z"/></svg>
+          <button type="button" class="stop-button" id="btnStop" title="Stop Server">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
           </button>
-          <button type="button" class="control-button log-button" id="openLog" title="View Logs">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
-              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
-              <path d="M14 2v4a2 2 0 0 0 2 2h4M8 16l2-2-2-2m4 6h4"/>
-              </svg>
+          <button type="button" class="log-button" id="openLog" title="View Logs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14,2 14,8 20,8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10,9 9,9 8,9"/>
+            </svg>
           </button>
         </div>
 
@@ -83,6 +98,81 @@
         </div>
       </div>
     </form>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel" style="display: none;">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button type="button" class="close-settings" id="closeSettings" title="Close Settings">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="settings-content">
+        <div class="setting-group">
+          <h3>Appearance</h3>
+          <div class="setting-item">
+            <label for="themeSelect">Theme</label>
+            <select id="themeSelect" name="theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h3>Notifications</h3>
+          <div class="setting-item">
+            <label for="notificationsToggle">
+              <input type="checkbox" id="notificationsToggle" name="notifications">
+              Enable notifications
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h3>System Integration</h3>
+          <div class="setting-item">
+            <label for="autoStartToggle">
+              <input type="checkbox" id="autoStartToggle" name="autoStart">
+              Start with system
+            </label>
+          </div>
+          <div class="setting-item">
+            <label for="minimizeToTrayToggle">
+              <input type="checkbox" id="minimizeToTrayToggle" name="minimizeToTray">
+              Minimize to system tray
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h3>Keyboard Shortcuts</h3>
+          <div class="shortcut-list">
+            <div class="shortcut-item">
+              <span class="shortcut-action">Start Tomcat</span>
+              <span class="shortcut-keys">Cmd/Ctrl + R</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="shortcut-action">Stop Tomcat</span>
+              <span class="shortcut-keys">Cmd/Ctrl + S</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="shortcut-action">Toggle Log Window</span>
+              <span class="shortcut-keys">Cmd/Ctrl + L</span>
+            </div>
+            <div class="shortcut-item">
+              <span class="shortcut-action">Show/Hide Window</span>
+              <span class="shortcut-keys">Cmd/Ctrl + Shift + T</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <script>
@@ -91,7 +181,134 @@
       const elStatus = document.getElementById('status');
       const installType = document.getElementById('installType');
       const installLocation = document.getElementById('installLocation');
+      const tomcatPort = document.getElementById('tomcatPort');
       const versionElement = document.getElementById('version');
+      const settingsPanel = document.getElementById('settingsPanel');
+      const settingsButton = document.getElementById('settingsButton');
+      const minimizeButton = document.getElementById('minimizeButton');
+      const closeSettings = document.getElementById('closeSettings');
+      const themeSelect = document.getElementById('themeSelect');
+      const notificationsToggle = document.getElementById('notificationsToggle');
+      const autoStartToggle = document.getElementById('autoStartToggle');
+      const minimizeToTrayToggle = document.getElementById('minimizeToTrayToggle');
+
+      // Load configuration and populate fields
+      const loadConfiguration = async () => {
+        try {
+          const config = await window.api.loadConfig();
+          installType.value = config.installType || 'homebrew';
+          installLocation.value = config.installLocation || '';
+          tomcatPort.value = config.tomcatPort || '8080';
+          
+          // Load settings
+          themeSelect.value = config.theme || 'dark';
+          notificationsToggle.checked = config.notifications !== false;
+          autoStartToggle.checked = config.autoStart === true;
+          minimizeToTrayToggle.checked = config.minimizeToTray !== false;
+          
+          // Apply theme
+          applyTheme(config.theme || 'dark');
+          
+          // Update install location field state based on install type
+          if (installType.value === 'homebrew') {
+            installLocation.disabled = true;
+            installLocation.value = '';
+          } else {
+            installLocation.disabled = false;
+          }
+          
+          console.log('Configuration loaded:', config);
+        } catch (error) {
+          console.error('Failed to load configuration:', error);
+        }
+      };
+
+      // Apply theme
+      const applyTheme = (theme) => {
+        const body = document.body;
+        body.classList.remove('light-theme', 'dark-theme');
+        
+        if (theme === 'light') {
+          body.classList.add('light-theme');
+        } else if (theme === 'dark') {
+          body.classList.add('dark-theme');
+        } else if (theme === 'auto') {
+          // Use system preference
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          body.classList.add(prefersDark ? 'dark-theme' : 'light-theme');
+        }
+      };
+
+      // Save configuration
+      const saveConfiguration = async () => {
+        try {
+          const config = {
+            installType: installType.value,
+            installLocation: installLocation.value,
+            tomcatPort: tomcatPort.value,
+            theme: themeSelect.value,
+            notifications: notificationsToggle.checked,
+            autoStart: autoStartToggle.checked,
+            minimizeToTray: minimizeToTrayToggle.checked
+          };
+          
+          const result = await window.api.saveConfig(config);
+          if (result.success) {
+            console.log('Configuration saved successfully');
+          } else {
+            console.error('Failed to save configuration:', result.error);
+          }
+        } catch (error) {
+          console.error('Error saving configuration:', error);
+        }
+      };
+
+      // Load configuration when app starts
+      loadConfiguration();
+
+      // Set up shortcut event listeners
+      window.api.onShortcutStartTomcat(() => {
+        // Show a brief visual indicator that shortcut was used
+        showShortcutIndicator('Starting Tomcat...');
+        // Trigger the start button click to reuse the same logic and UI updates
+        document.getElementById('btnStart').click();
+      });
+
+      window.api.onShortcutStopTomcat(() => {
+        // Show a brief visual indicator that shortcut was used
+        showShortcutIndicator('Stopping Tomcat...');
+        // Trigger the stop button click to reuse the same logic and UI updates
+        document.getElementById('btnStop').click();
+      });
+
+      window.api.onShortcutToggleLog(() => {
+        // Show a brief visual indicator that shortcut was used
+        showShortcutIndicator('Opening logs...');
+        // Open log window
+        document.getElementById('openLog').click();
+      });
+
+      // Function to show brief shortcut indicator
+      const showShortcutIndicator = (message) => {
+        // Remove any existing indicator
+        const existingIndicator = document.querySelector('.shortcut-indicator');
+        if (existingIndicator) {
+          existingIndicator.remove();
+        }
+
+        // Create and show new indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'shortcut-indicator';
+        indicator.textContent = message;
+        document.body.appendChild(indicator);
+
+        // Remove after 2 seconds
+        setTimeout(() => {
+          if (indicator.parentNode) {
+            indicator.remove();
+          }
+        }, 2000);
+      };
 
       // Load version from package.json
       window.api.getAppVersion().then(version => {
@@ -105,7 +322,7 @@
       const checkTomcatStatus = async () => {
         const path = installLocation.value.trim();
         const type = installType.value.trim().toLowerCase();
-        const port = document.getElementById('tomcatPort').value.trim();
+        const port = tomcatPort.value.trim();
         
         try {
           const status = await window.api.checkTomcatStatus(path, type, port);
@@ -145,19 +362,83 @@
     } else {
       installLocation.disabled = false;
     }
+    
+    // Save configuration when install type changes
+    saveConfiguration();
   });
 
-  // Set initial state for install location field on page load
-  if (installType.value === 'homebrew') {
-    installLocation.disabled = true;
-    installLocation.value = '';
-  }
+  // Save configuration when install location changes
+  installLocation.addEventListener('input', () => {
+    saveConfiguration();
+  });
+
+  // Save configuration when port changes
+  tomcatPort.addEventListener('input', () => {
+    saveConfiguration();
+  });
+
+  // Settings panel functionality
+  settingsButton.addEventListener('click', () => {
+    settingsPanel.style.display = 'block';
+  });
+
+  // Minimize button functionality
+  minimizeButton.addEventListener('click', () => {
+    window.api.minimizeWindow();
+  });
+
+  closeSettings.addEventListener('click', () => {
+    settingsPanel.style.display = 'none';
+  });
+
+  // Settings event listeners
+  themeSelect.addEventListener('change', () => {
+    applyTheme(themeSelect.value);
+    saveConfiguration();
+  });
+
+  notificationsToggle.addEventListener('change', () => {
+    saveConfiguration();
+  });
+
+  autoStartToggle.addEventListener('change', async () => {
+    try {
+      await window.api.setAutoStart(autoStartToggle.checked);
+      saveConfiguration();
+    } catch (error) {
+      console.error('Failed to set auto-start:', error);
+      // Revert the toggle if it failed
+      autoStartToggle.checked = !autoStartToggle.checked;
+    }
+  });
+
+  minimizeToTrayToggle.addEventListener('change', () => {
+    saveConfiguration();
+  });
+
+  // Keyboard shortcuts help
+  document.addEventListener('keydown', (event) => {
+    // Close settings panel with Escape
+    if (event.key === 'Escape' && settingsPanel.style.display === 'block') {
+      settingsPanel.style.display = 'none';
+    }
+    
+    // Toggle settings with Cmd/Ctrl + comma
+    if ((event.metaKey || event.ctrlKey) && event.key === ',') {
+      event.preventDefault();
+      if (settingsPanel.style.display === 'block') {
+        settingsPanel.style.display = 'none';
+      } else {
+        settingsPanel.style.display = 'block';
+      }
+    }
+  });
 
    // Start button handler: validates input and sends start command to backend
     document.getElementById('btnStart').addEventListener('click', async () => {
-      const path = document.getElementById('installLocation').value.trim();
-      const type = document.getElementById('installType').value.trim().toLowerCase();
-      const port = document.getElementById('tomcatPort').value.trim();
+      const path = installLocation.value.trim();
+      const type = installType.value.trim().toLowerCase();
+      const port = tomcatPort.value.trim();
       if (type === 'manual' && !path) {
         setStatus('Manual mode requires install location', '');
         return;
@@ -181,9 +462,9 @@
 
     // Stop button handler: validates input and sends stop command to backend
     document.getElementById('btnStop').addEventListener('click', async () => {
-      const path = document.getElementById('installLocation').value.trim();
-      const type = document.getElementById('installType').value.trim().toLowerCase();
-      const port = document.getElementById('tomcatPort').value.trim();
+      const path = installLocation.value.trim();
+      const type = installType.value.trim().toLowerCase();
+      const port = tomcatPort.value.trim();
       if (type === 'manual' && !path) {
         setStatus('Manual mode requires install location', '');
         return;
@@ -207,8 +488,8 @@
 
     // Log button handler: opens log window with appropriate path
     document.getElementById('openLog').addEventListener('click', () => {
-      const installPath = document.getElementById('installLocation').value.trim();
-      const type = document.getElementById('installType').value.trim().toLowerCase();
+      const installPath = installLocation.value.trim();
+      const type = installType.value.trim().toLowerCase();
 
       // Get today's date in YYYY-MM-DD format
       const today = new Date();

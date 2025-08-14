@@ -8,4 +8,14 @@ contextBridge.exposeInMainWorld('api', {
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   checkTomcatStatus: (path, type, port) => ipcRenderer.invoke('check-tomcat-status', path, type, port),
   quitApp: () => ipcRenderer.send('quit-app'),
+  saveConfig: (config) => ipcRenderer.invoke('save-config', config),
+  loadConfig: () => ipcRenderer.invoke('load-config'),
+  setAutoStart: (enabled) => ipcRenderer.invoke('set-auto-start', enabled),
+  toggleWindowVisibility: () => ipcRenderer.send('toggle-window-visibility'),
+  minimizeWindow: () => ipcRenderer.send('minimize-window'),
+  
+  // Shortcut event listeners
+  onShortcutStartTomcat: (callback) => ipcRenderer.on('shortcut-start-tomcat', callback),
+  onShortcutStopTomcat: (callback) => ipcRenderer.on('shortcut-stop-tomcat', callback),
+  onShortcutToggleLog: (callback) => ipcRenderer.on('shortcut-toggle-log', callback),
 });

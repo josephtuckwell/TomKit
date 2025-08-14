@@ -1,8 +1,11 @@
-# TomKit
+# ![TomKit](app/public/TomKit-icon.svg) TomKit
 
 ![TomKit](app/public/TomKit.png)
 
 TomKit is a simple Electron-based tool for managing Apache Tomcat installations on your system. It allows you to start and stop Tomcat either as a Homebrew service or via a manual install path.
+
+## Why?
+- Honestly, I was getting sick of the bugginess of IntelliJ constantly failing to start or stop tomcat and having to re-create my configurations all the time after an update. So, I thought - Why not build a simple tool that just works for me, and learn a new language at the same time?
 
 ## Features
 
