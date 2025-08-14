@@ -352,6 +352,20 @@
       elStatus.className = `status ${kind || ''}`.trim();
       elStatus.appendChild(dot);
       elStatus.append(' ', label);
+      
+      // Update button states based on Tomcat running status
+      const startButton = document.getElementById('btnStart');
+      const logButton = document.getElementById('openLog');
+      
+      if (kind === 'ok' && label.includes('Running')) {
+        // Tomcat is running - make start button green and log button blue
+        startButton.classList.add('running');
+        logButton.classList.add('running');
+      } else {
+        // Tomcat is not running - return to default grey state
+        startButton.classList.remove('running');
+        logButton.classList.remove('running');
+      }
     };
 
   // Enable/disable install location based on install type selection

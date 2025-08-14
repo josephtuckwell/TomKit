@@ -288,13 +288,17 @@
       body { background: var(--bg); }
     }
 
-  .start-button   { background-color: #6c7d6e; }
-  .stop-button    { background-color: #6c757d; }
-  .log-button    { background-color: #6c757d; }
+  .start-button   { background-color: #6c757d; } 
+  .stop-button    { background-color: #6c757d; } 
+  .log-button    { background-color: #6c757d; } 
 
-  .start-button:hover   { background-color: #00fa3a; transform: scale(1.05); } /* Green */
-  .stop-button:hover    { background-color: #ff0019; transform: scale(1.05); } /* Red */
-  .log-button:hover    { background-color: #007bff; transform: scale(1.05); } /* Blue */
+  .start-button:hover   { background-color: #00fa3a; transform: scale(1.05); } 
+  .stop-button:hover    { background-color: #ff0019; transform: scale(1.05); } 
+  .log-button:hover    { background-color: #007bff; transform: scale(1.05); } 
+
+  /* Dynamic button states based on Tomcat status */
+  .start-button.running { background-color: var(--ok); }
+  .log-button.running { background-color: var(--brand); }
 
 .quit-button {
   background-color: #6c757d;
@@ -316,6 +320,7 @@
   top: 20px;
   right: 80px;
 }
+
 button {
   cursor: pointer;
   font-weight: 500;
