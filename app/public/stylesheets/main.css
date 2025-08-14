@@ -290,11 +290,11 @@
 
   .start-button   { background-color: #6c757d; } 
   .stop-button    { background-color: #6c757d; } 
-  .log-button    { background-color: #6c757d; } 
+  .log-button   { background-color: #6c757d; } 
 
   .start-button:hover   { background-color: #00fa3a; transform: scale(1.05); } 
   .stop-button:hover    { background-color: #ff0019; transform: scale(1.05); } 
-  .log-button:hover    { background-color: #007bff; transform: scale(1.05); } 
+  .log-button:hover   { background-color: #007bff; transform: scale(1.05); } 
 
   /* Dynamic button states based on Tomcat status */
   .start-button.running { background-color: var(--ok); }

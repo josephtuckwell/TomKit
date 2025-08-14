@@ -3,23 +3,248 @@
 <head>
   <meta charset="UTF-8" />
   <title>Catalina Log</title>
-  <style>
-    body { background: #181818; color: #eee; margin: 0; font-family: monospace; }
-    #log { white-space: pre-wrap; padding: 16px; height: 100vh; overflow-y: auto; }
-  </style>
+  <link rel="stylesheet" href="stylesheets/log.css">
 </head>
 <body>
+  <div class="toolbar">
+    <div class="search-container">
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path>
+      </svg>
+      <input type="text" class="search-input" placeholder="Find..." id="searchInput">
+    </div>
+
+    <span style="flex:0 0 12px"> </span>
+
+    <div class="search-controls">
+      <span class="search-count" id="searchCount"></span>
+      <button class="search-btn" id="prevBtn" disabled>Previous</button>
+      <button class="search-btn" id="nextBtn" disabled>Next</button>
+    </div>
+  </div>
+  
   <pre id="log">Loading...</pre>
   <script>
+    let originalLogText = '';
+    let currentMatches = [];
+    let currentMatchIndex = -1;
+
+    // Function to detect log level from a line
+    function detectLogLevel(line) {
+      const upperLine = line.toUpperCase();
+      
+      // Check for common log patterns
+      if (upperLine.includes('SEVERE') || upperLine.includes('FATAL')) {
+        return 'severe';
+      }
+      if (upperLine.includes('ERROR')) {
+        return 'error';
+      }
+      if (upperLine.includes('WARN')) {
+        return 'warn';
+      }
+      if (upperLine.includes('INFO')) {
+        return 'info';
+      }
+      if (upperLine.includes('DEBUG') || upperLine.includes('FINE')) {
+        return 'debug';
+      }
+      
+      // Check for common error indicators
+      if (upperLine.includes('EXCEPTION') || 
+          upperLine.includes('STACKTRACE') || 
+          upperLine.includes('CAUSED BY') ||
+          upperLine.includes('FAILED') ||
+          upperLine.includes('UNABLE') ||
+          upperLine.includes('TIMEOUT')) {
+        return 'error';
+      }
+      
+      return 'info'; // Default
+    }
+
+    // Function to format log content with color coding
+    function formatLogContent(logText) {
+      const lines = logText.split('\n');
+      let formattedLines = [];
+      
+      lines.forEach(line => {
+        if (line.trim()) {
+          const logLevel = detectLogLevel(line);
+          formattedLines.push(`<span class="log-line ${logLevel}">${escapeHtml(line)}</span>`);
+        } else {
+          formattedLines.push('');
+        }
+      });
+      
+      return formattedLines.join('\n');
+    }
+
+    // Function to escape HTML characters
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Search functionality
+    function performSearch(searchTerm) {
+      const log = document.getElementById('log');
+      const searchCount = document.getElementById('searchCount');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      if (!searchTerm.trim()) {
+        log.innerHTML = formatLogContent(originalLogText);
+        searchCount.textContent = '';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        currentMatches = [];
+        currentMatchIndex = -1;
+        return;
+      }
+
+      // Create regex for case-insensitive search
+      const regex = new RegExp(escapeRegExp(searchTerm), 'gi');
+      const matches = [...originalLogText.matchAll(regex)];
+      currentMatches = matches;
+      currentMatchIndex = matches.length > 0 ? 0 : -1;
+
+      if (matches.length === 0) {
+        log.innerHTML = formatLogContent(originalLogText);
+        searchCount.textContent = 'No matches';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+      }
+
+      // Highlight all matches in the original text first
+      let highlightedText = originalLogText;
+      let offset = 0;
+      
+      matches.forEach((match, index) => {
+        const start = match.index + offset;
+        const end = start + match[0].length;
+        const highlightClass = index === currentMatchIndex ? 'highlight current' : 'highlight';
+        const replacement = `<span class="${highlightClass}" data-match-index="${index}">${match[0]}</span>`;
+        
+        highlightedText = highlightedText.slice(0, start) + replacement + highlightedText.slice(end);
+        offset += replacement.length - match[0].length;
+      });
+
+      // Format the highlighted text with log level colors
+      log.innerHTML = formatLogContentWithHighlights(highlightedText);
+      searchCount.textContent = `${currentMatchIndex + 1} of ${matches.length}`;
+      prevBtn.disabled = matches.length <= 1;
+      nextBtn.disabled = matches.length <= 1;
+
+      // Scroll to current match
+      scrollToCurrentMatch();
+    }
+
+    // Function to format log content while preserving existing highlights
+    function formatLogContentWithHighlights(logText) {
+      const lines = logText.split('\n');
+      let formattedLines = [];
+      
+      lines.forEach(line => {
+        if (line.trim()) {
+          const logLevel = detectLogLevel(line);
+          // If line contains highlights, preserve them
+          if (line.includes('<span class="highlight')) {
+            formattedLines.push(`<span class="log-line ${logLevel}">${line}</span>`);
+          } else {
+            formattedLines.push(`<span class="log-line ${logLevel}">${escapeHtml(line)}</span>`);
+          }
+        } else {
+          formattedLines.push('');
+        }
+      });
+      
+      return formattedLines.join('\n');
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function scrollToCurrentMatch() {
+      const currentHighlight = document.querySelector('.highlight.current');
+      if (currentHighlight) {
+        currentHighlight.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
+    }
+
+    function navigateToMatch(direction) {
+      if (currentMatches.length === 0) return;
+
+      // Update current match index
+      if (direction === 'next') {
+        currentMatchIndex = (currentMatchIndex + 1) % currentMatches.length;
+      } else {
+        currentMatchIndex = currentMatchIndex <= 0 ? currentMatches.length - 1 : currentMatchIndex - 1;
+      }
+
+      // Update highlights
+      document.querySelectorAll('.highlight').forEach((element, index) => {
+        element.className = index === currentMatchIndex ? 'highlight current' : 'highlight';
+      });
+
+      // Update counter
+      document.getElementById('searchCount').textContent = `${currentMatchIndex + 1} of ${currentMatches.length}`;
+      
+      // Scroll to current match
+      scrollToCurrentMatch();
+    }
+
+    // Event listeners
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      performSearch(e.target.value);
+    });
+
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          navigateToMatch('prev');
+        } else {
+          navigateToMatch('next');
+        }
+      } else if (e.key === 'Escape') {
+        e.target.value = '';
+        performSearch('');
+      }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      navigateToMatch('prev');
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      navigateToMatch('next');
+    });
+
     window.api.onCatalinaData(data => {
       const log = document.getElementById('log');
-      log.textContent += data;
+      originalLogText += data;
+      
+      // If there's an active search, re-perform it with new data
+      const searchTerm = document.getElementById('searchInput').value;
+      if (searchTerm.trim()) {
+        performSearch(searchTerm);
+      } else {
+        log.innerHTML = formatLogContent(originalLogText);
+      }
+      
       log.scrollTop = log.scrollHeight;
     });
 
     window.api.onStartTail((logPath) => {
-  window.api.tailCatalina(logPath);
-});
+      window.api.tailCatalina(logPath);
+    });
   </script>
 </body>
 </html>
