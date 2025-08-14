@@ -123,6 +123,29 @@ body {
   white-space: nowrap;
 }
 
+.log-size {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.clear-btn {
+  background: rgba(255, 85, 85, 0.1) !important;
+  border-color: rgba(255, 85, 85, 0.3) !important;
+  color: #ff5555 !important;
+}
+
+.clear-btn:hover {
+  background: rgba(255, 85, 85, 0.2) !important;
+  border-color: #ff5555 !important;
+}
+
+.log-empty {
+  color: var(--muted);
+  font-style: italic;
+}
+
 #log { 
   white-space: pre-wrap; 
   padding: 16px; 

@@ -559,6 +559,9 @@ function openLogWindow(logPath) {
   });
 
   logWindow.webContents.on('did-finish-load', () => {
+    // Send the log path to the renderer so it knows which file to clear
+    logWindow.webContents.send('start-tail', logPath);
+    
     if (logTailProcess) {
       logTailProcess.kill();
       logTailProcess = null;
@@ -585,4 +588,48 @@ function openLogWindow(logPath) {
 
 ipcMain.on('open-log-window', (event, logPath) => {
   openLogWindow(logPath);
+});
+
+// Handle tail catalina request (if needed for future functionality)
+ipcMain.on('tail-catalina', (event, logPath) => {
+  // This could be used for manual tail requests, but currently handled in openLogWindow
+  console.log('Manual tail request for:', logPath);
+});
+
+// Handle clear log file request
+ipcMain.handle('clear-log-file', async (event, logPath) => {
+  try {
+    // If no specific path is provided, try to determine the catalina log path
+    if (!logPath) {
+      const config = loadConfig();
+      let catalinaLogPath;
+      
+      if (config.installType === 'homebrew') {
+        catalinaLogPath = '/usr/local/opt/tomcat/libexec/logs/catalina.out';
+      } else if (config.installLocation) {
+        catalinaLogPath = path.join(config.installLocation, 'logs', 'catalina.out');
+      } else {
+        throw new Error('Unable to determine log file path');
+      }
+      
+      logPath = catalinaLogPath;
+    }
+    
+    // Check if the log file exists
+    if (!fs.existsSync(logPath)) {
+      throw new Error('Log file does not exist');
+    }
+    
+    // Clear the log file by writing an empty string to it
+    fs.writeFileSync(logPath, '');
+    
+    console.log(`Log file cleared: ${logPath}`);
+    showNotification('TomKit', 'Log file cleared successfully');
+    
+    return { success: true, message: 'Log file cleared successfully' };
+  } catch (error) {
+    console.error('Error clearing log file:', error);
+    showNotification('TomKit Error', `Failed to clear log file: ${error.message}`);
+    throw error;
+  }
 });

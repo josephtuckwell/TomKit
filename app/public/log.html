@@ -17,6 +17,7 @@
     <span style="flex:0 0 12px"> </span>
 
     <div class="search-controls">
+      <span class="log-size" id="logSize" title="Current log size">0 KB</span>
       <span class="search-count" id="searchCount"></span>
       <button class="search-btn" id="prevBtn" disabled>Previous</button>
       <button class="search-btn" id="nextBtn" disabled>Next</button>
@@ -26,14 +27,21 @@
         </svg>
         Export
       </button>
+      <button class="search-btn clear-btn" id="clearBtn" title="Clear log content">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+        Clear
+      </button>
     </div>
   </div>
   
-  <pre id="log">Loading...</pre>
+  <pre id="log">Loading log file...</pre>
   <script>
     let originalLogText = '';
     let currentMatches = [];
     let currentMatchIndex = -1;
+    let currentLogPath = null; // Store the current log file path
 
     // Function to detect log level from a line
     function detectLogLevel(line) {
@@ -237,6 +245,10 @@
       exportLogToFile();
     });
 
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      clearLogContent();
+    });
+
     // Function to export log content to a file
     function exportLogToFile() {
       if (!originalLogText.trim()) {
@@ -262,8 +274,63 @@
       URL.revokeObjectURL(url);
     }
 
+    // Function to clear log content
+    function clearLogContent() {
+      if (!originalLogText.trim()) {
+        alert('No log content to clear');
+        return;
+      }
+
+      if (confirm('Are you sure you want to clear the log file? This will permanently delete all log data and cannot be undone.')) {
+        // Clear the actual log file through the main process, using the current log path
+        window.api.clearLogFile(currentLogPath).then(() => {
+          // Clear the display
+          originalLogText = '';
+          const log = document.getElementById('log');
+          log.innerHTML = '<span class="log-empty">Log file cleared - waiting for new content...</span>';
+          
+          // Clear search state
+          const searchInput = document.getElementById('searchInput');
+          searchInput.value = '';
+          performSearch('');
+          
+          // Update log size
+          updateLogSize();
+        }).catch((error) => {
+          alert('Failed to clear log file: ' + error.message);
+        });
+      }
+    }
+
+    // Function to format file size
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // Function to update log size indicator
+    function updateLogSize() {
+      const logSizeElement = document.getElementById('logSize');
+      const bytes = new Blob([originalLogText]).size;
+      logSizeElement.textContent = formatFileSize(bytes);
+    }
+
     window.api.onCatalinaData(data => {
       const log = document.getElementById('log');
+      
+      // If this is the first data and the current display is still "Loading log file..."
+      if (originalLogText === '' && log.textContent === 'Loading log file...') {
+        // Check if the incoming data is empty or just whitespace
+        if (!data || data.trim() === '') {
+          log.innerHTML = '<span class="log-empty">Log file is empty - waiting for new content...</span>';
+          updateLogSize();
+          return;
+        }
+      }
+      
       originalLogText += data;
       
       // If there's an active search, re-perform it with new data
@@ -274,11 +341,21 @@
         log.innerHTML = formatLogContent(originalLogText);
       }
       
+      // Update log size indicator
+      updateLogSize();
+      
       log.scrollTop = log.scrollHeight;
     });
 
     window.api.onStartTail((logPath) => {
-      window.api.tailCatalina(logPath);
+      currentLogPath = logPath; // Store the log path for clearing
+      console.log('Log path set to:', logPath);
+      
+      // Update the loading message to be more specific
+      const log = document.getElementById('log');
+      if (log.textContent === 'Loading log file...') {
+        log.innerHTML = '<span class="log-empty">Monitoring log file - waiting for content...</span>';
+      }
     });
   </script>
 </body>
