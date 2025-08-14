@@ -163,6 +163,11 @@ ipcMain.handle('get-app-version', async () => {
   return getAppVersion();
 });
 
+// Handle quit request
+ipcMain.on('quit-app', () => {
+  app.quit();
+});
+
 // Stop tailing when renderer requests
 ipcMain.on('stop-tail-catalina', () => {
   if (tailProcess) {

@@ -17,6 +17,12 @@
         </span>
         TomKit
       </h1>
+      <button type="button" class="quit-button" id="quitButton" title="Quit">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
         <span class="version" id="version">v0.0.0</span>
       <p class="subtitle">Tomcat configuration</p>
     </header>
@@ -54,15 +60,16 @@
 
           <!-- Start and Stop buttons -->
           <button type="button" class="control-button start-button" id="btnStart" title="Start Server">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960"><path d="M320-200v-560l440 280zm80-146 210-134-210-134z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960"><path d="M320-200v-560l440 280zm80-146 210-134-210-134z"/></svg>
           </button>
           <button type="button" class="control-button stop-button" id="btnStop" title="Stop Server">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 -960 960 960"><path d="M320-640v320zm-80 400v-480h480v480zm80-80h320v-320H320z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960"><path d="M320-640v320zm-80 400v-480h480v480zm80-80h320v-320H320z"/></svg>
           </button>
           <button type="button" class="control-button log-button" id="openLog" title="View Logs">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-code" viewBox="0 0 16 16">
-              <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8z"/>
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>
+              <path d="M14 2v4a2 2 0 0 0 2 2h4M8 16l2-2-2-2m4 6h4"/>
+              </svg>
           </button>
         </div>
 
@@ -194,6 +201,11 @@
       }
 
       window.api.openLogWindow(logPath);
+    });
+
+    // Quit button handler: closes the application
+    document.getElementById('quitButton').addEventListener('click', () => {
+      window.api.quitApp();
     });
   </script>
 
