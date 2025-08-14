@@ -26,6 +26,14 @@ Start the app with:
 npm run start
 ```
 
+## Packaging
+
+```
+npm run build:mac    # Mac OS
+npm run build:win    # Windows
+npm run build:linux  # Linux
+```
+
 ## Usage
 
 1. Select the install type (Homebrew or Manual).
