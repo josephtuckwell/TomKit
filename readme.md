@@ -1,4 +1,4 @@
-# ![TomKit](app/public/TomKit-icon.svg) TomKit
+# ![TomKit](app/public/images/TomKit-icon.svg) TomKit
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/josephtuckwell/TomKit)
@@ -7,7 +7,7 @@
 > A modern, lightweight desktop application for managing Apache Tomcat installations with real-time log monitoring and advanced search capabilities.
 
 <div align="center">
-  <img src="app/public/TomKit.png" alt="TomKit Screenshot" width="600">
+  <img src="app/public/images/TomKit.png" alt="TomKit Screenshot" width="600">
 </div>
 
 ## ✨ Features
