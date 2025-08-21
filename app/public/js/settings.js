@@ -13,6 +13,7 @@ class SettingsManager {
     const notificationsToggle = document.getElementById('notificationsToggle');
     const autoStartToggle = document.getElementById('autoStartToggle');
     const minimizeToTrayToggle = document.getElementById('minimizeToTrayToggle');
+    const autoLaunchToggle = document.getElementById('autoLaunchToggle');
 
     // Settings panel toggle
     settingsButton.addEventListener('click', () => {
@@ -45,6 +46,10 @@ class SettingsManager {
     });
 
     minimizeToTrayToggle.addEventListener('change', () => {
+      this.configManager.saveConfiguration();
+    });
+
+    autoLaunchToggle.addEventListener('change', () => {
       this.configManager.saveConfiguration();
     });
 

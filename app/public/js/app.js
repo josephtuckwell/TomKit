@@ -15,6 +15,9 @@ class TomKitApp {
     // Initialize Tomcat controller
     this.tomcatController = new TomcatController(this.configManager);
 
+    // Refresh webapps list after configuration is loaded
+    setTimeout(() => this.tomcatController.refreshWebapps(), 100);
+
     // Initialize settings manager
     this.settingsManager = new SettingsManager(this.configManager);
 

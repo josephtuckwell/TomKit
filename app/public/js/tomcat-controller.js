@@ -16,6 +16,21 @@ class TomcatController {
     
     // Log button handler
     document.getElementById('openLog').addEventListener('click', () => this.openLogWindow());
+    
+    // Launch webapp button handler
+    document.getElementById('launchWebappBtn').addEventListener('click', () => this.launchWebapp());
+    
+    // Install type change handler to refresh webapps
+    document.getElementById('installType').addEventListener('change', () => this.refreshWebapps());
+    
+    // Install location change handler to refresh webapps
+    document.getElementById('installLocation').addEventListener('input', () => this.refreshWebapps());
+    
+    // Webapp selection change handler
+    document.getElementById('webappSelect').addEventListener('change', (e) => {
+      const launchBtn = document.getElementById('launchWebappBtn');
+      launchBtn.disabled = e.target.value === '';
+    });
   }
 
   startStatusChecking() {
@@ -78,10 +93,13 @@ class TomcatController {
     const installLocation = document.getElementById('installLocation');
     const installType = document.getElementById('installType');
     const tomcatPort = document.getElementById('tomcatPort');
+    const webappSelect = document.getElementById('webappSelect');
 
     const path = installLocation.value.trim();
     const type = installType.value.trim().toLowerCase();
     const port = tomcatPort.value.trim();
+    const selectedWebapp = webappSelect.value || 'ALL';
+    const autoLaunch = this.configManager.config?.autoLaunch === true;
     
     if (type === 'manual' && !path) {
       this.setStatus('Manual mode requires install location', '');
@@ -91,7 +109,7 @@ class TomcatController {
     this.setStatus('Starting...', 'ok');
     
     try {
-      const result = await window.api.startTomcat(path, type, port);
+      const result = await window.api.startTomcat(path, type, port, selectedWebapp, autoLaunch);
       if (result.success) {
         // Check status after a brief delay to confirm
         setTimeout(() => this.checkTomcatStatus(), 2000);
@@ -161,6 +179,76 @@ class TomcatController {
     }
 
     window.api.openLogWindow(logPath);
+  }
+
+  async refreshWebapps() {
+    const installLocation = document.getElementById('installLocation');
+    const installType = document.getElementById('installType');
+    const webappSelect = document.getElementById('webappSelect');
+    const launchBtn = document.getElementById('launchWebappBtn');
+
+    const path = installLocation.value.trim();
+    const type = installType.value.trim().toLowerCase();
+
+    try {
+      const webapps = await window.api.scanWebapps(path, type);
+      
+      // Clear existing options except the default ones
+      webappSelect.innerHTML = `
+        <option value="ALL" selected>All</option>
+        <option value="ROOT">ROOT</option>
+      `;
+      
+      // Add discovered webapps
+      webapps.forEach(webapp => {
+        const option = document.createElement('option');
+        option.value = webapp;
+        option.textContent = webapp;
+        webappSelect.appendChild(option);
+      });
+      
+      // Enable the dropdown and update button state
+      webappSelect.disabled = false;
+      launchBtn.disabled = webappSelect.value === '';
+      
+    } catch (error) {
+      console.error('Error refreshing webapps:', error);
+      // Disable dropdown and button on error
+      webappSelect.disabled = true;
+      launchBtn.disabled = true;
+    }
+  }
+
+  async launchWebapp() {
+    const installLocation = document.getElementById('installLocation');
+    const installType = document.getElementById('installType');
+    const tomcatPort = document.getElementById('tomcatPort');
+    const webappSelect = document.getElementById('webappSelect');
+
+    const path = installLocation.value.trim();
+    const type = installType.value.trim().toLowerCase();
+    const port = tomcatPort.value.trim();
+    const selectedWebapp = webappSelect.value;
+
+    if (!selectedWebapp) {
+      alert('Please select a webapp to launch');
+      return;
+    }
+
+    try {
+      const launchAll = selectedWebapp === 'ALL';
+      const webapp = launchAll ? null : selectedWebapp;
+      
+      const result = await window.api.launchWebapp(webapp, port, launchAll, path, type);
+      
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      
+    } catch (error) {
+      console.error('Error launching webapp:', error);
+      alert(`Failed to launch webapp: ${error.message}`);
+    }
   }
 }
 

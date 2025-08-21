@@ -27,7 +27,8 @@ function loadConfig() {
     theme: 'dark',
     notifications: true,
     autoStart: false,
-    minimizeToTray: true
+    minimizeToTray: true,
+    autoLaunch: false
   };
 }
 

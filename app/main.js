@@ -3,7 +3,7 @@ const path = require('path');
 
 // Import modules
 const { getAppVersion, loadConfig, saveConfig } = require('./js/config');
-const { startTomcat, stopTomcat, checkTomcatStatus } = require('./js/tomcat-manager');
+const { startTomcat, stopTomcat, checkTomcatStatus, scanWebapps, launchWebapp } = require('./js/tomcat-manager');
 const { createWindow, registerShortcuts } = require('./js/window-manager');
 const { createTray } = require('./js/tray-manager');
 const { openLogWindow, clearLogFile } = require('./js/log-manager');
@@ -64,9 +64,9 @@ app.on('will-quit', () => {
 });
 
 // Handle "start-tomcat" requests from the renderer process
-ipcMain.handle('start-tomcat', async (event, installPath, type, port) => {
+ipcMain.handle('start-tomcat', async (event, installPath, type, port, selectedWebapp, autoLaunch) => {
   try {
-    const result = await startTomcat(installPath, type, port);
+    const result = await startTomcat(installPath, type, port, selectedWebapp, autoLaunch);
     showNotification('TomKit', 'Tomcat started successfully');
     return result;
   } catch (error) {
@@ -173,6 +173,30 @@ ipcMain.handle('clear-log-file', async (event, logPath) => {
     return result;
   } catch (error) {
     showNotification('TomKit Error', `Failed to clear log file: ${error.message}`);
+    throw error;
+  }
+});
+
+// Handle scan webapps request
+ipcMain.handle('scan-webapps', async (event, installPath, type) => {
+  try {
+    return scanWebapps(installPath, type);
+  } catch (error) {
+    console.error('Error scanning webapps:', error);
+    return [];
+  }
+});
+
+// Handle launch webapp request
+ipcMain.handle('launch-webapp', async (event, webapp, port, launchAll, installPath, type) => {
+  try {
+    const result = launchWebapp(webapp, port, launchAll, installPath, type);
+    if (result.success) {
+      showNotification('TomKit', result.message);
+    }
+    return result;
+  } catch (error) {
+    showNotification('TomKit Error', 'Failed to launch webapp');
     throw error;
   }
 });

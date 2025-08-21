@@ -55,6 +55,14 @@
               <label for="tomcatPort">Port</label>
               <input id="tomcatPort" name="tomcatPort" type="number" value="8080" min="1024" max="65535" autocomplete="off"/>
             </div>
+            <div class="field">
+              <!-- Dropdown to select webapp to launch -->
+              <label for="webappSelect">Webapp</label>
+              <select id="webappSelect" name="webappSelect" disabled>
+                <option value="ALL" selected>All</option>
+                <option value="ROOT">ROOT</option>
+              </select>
+            </div>
         </div>
       <div class="row">
         <div class="field">
@@ -86,6 +94,11 @@
               <line x1="16" y1="13" x2="8" y2="13"/>
               <line x1="16" y1="17" x2="8" y2="17"/>
               <polyline points="10,9 9,9 8,9"/>
+            </svg>
+          </button>
+          <button type="button" class="launch-button" id="launchWebappBtn" title="Launch Webapp" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
             </svg>
           </button>
         </div>
@@ -130,6 +143,16 @@
             <label for="notificationsToggle">
               <input type="checkbox" id="notificationsToggle" name="notifications">
               Enable notifications
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <h3>Tomcat Behavior</h3>
+          <div class="setting-item">
+            <label for="autoLaunchToggle">
+              <input type="checkbox" id="autoLaunchToggle" name="autoLaunch">
+              Auto-launch webapp after startup
             </label>
           </div>
         </div>

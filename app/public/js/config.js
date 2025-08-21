@@ -24,6 +24,7 @@ class ConfigManager {
     const notificationsToggle = document.getElementById('notificationsToggle');
     const autoStartToggle = document.getElementById('autoStartToggle');
     const minimizeToTrayToggle = document.getElementById('minimizeToTrayToggle');
+    const autoLaunchToggle = document.getElementById('autoLaunchToggle');
 
     installType.value = this.config.installType || 'homebrew';
     installLocation.value = this.config.installLocation || '';
@@ -34,6 +35,7 @@ class ConfigManager {
     notificationsToggle.checked = this.config.notifications !== false;
     autoStartToggle.checked = this.config.autoStart === true;
     minimizeToTrayToggle.checked = this.config.minimizeToTray !== false;
+    autoLaunchToggle.checked = this.config.autoLaunch === true;
     
     // Update install location field state based on install type
     if (installType.value === 'homebrew') {
@@ -70,6 +72,7 @@ class ConfigManager {
       const notificationsToggle = document.getElementById('notificationsToggle');
       const autoStartToggle = document.getElementById('autoStartToggle');
       const minimizeToTrayToggle = document.getElementById('minimizeToTrayToggle');
+      const autoLaunchToggle = document.getElementById('autoLaunchToggle');
 
       const config = {
         installType: installType.value,
@@ -78,7 +81,8 @@ class ConfigManager {
         theme: themeSelect.value,
         notifications: notificationsToggle.checked,
         autoStart: autoStartToggle.checked,
-        minimizeToTray: minimizeToTrayToggle.checked
+        minimizeToTray: minimizeToTrayToggle.checked,
+        autoLaunch: autoLaunchToggle.checked
       };
       
       const result = await window.api.saveConfig(config);
