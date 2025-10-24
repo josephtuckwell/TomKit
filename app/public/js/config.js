@@ -2,6 +2,18 @@
 class ConfigManager {
   constructor() {
     this.config = null;
+    this.setupSystemThemeListener();
+  }
+
+  // Listen for system theme changes
+  setupSystemThemeListener() {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addListener(() => {
+      // Only react to system theme changes if using 'auto' theme
+      if (this.config && this.config.theme === 'auto') {
+        this.applyTheme('auto');
+      }
+    });
   }
 
   // Load configuration and populate fields
@@ -49,16 +61,27 @@ class ConfigManager {
   // Apply theme
   applyTheme(theme) {
     const body = document.body;
+    const iconImg = document.querySelector('.title img');
     body.classList.remove('light-theme', 'dark-theme');
+    
+    let isDark = false;
     
     if (theme === 'light') {
       body.classList.add('light-theme');
+      isDark = false;
     } else if (theme === 'dark') {
       body.classList.add('dark-theme');
+      isDark = true;
     } else if (theme === 'auto') {
       // Use system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       body.classList.add(prefersDark ? 'dark-theme' : 'light-theme');
+      isDark = prefersDark;
+    }
+    
+    // Update icon based on theme
+    if (iconImg) {
+      iconImg.src = isDark ? 'images/TomKit-icon-white.png' : 'images/TomKit-icon.png';
     }
   }
 
