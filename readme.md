@@ -1,4 +1,4 @@
-# ![TomKit](app/public/images/TomKit-icon.svg) TomKit
+# ![TomKit](app/public/images/TomKit-icon-small.png) 
 
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/josephtuckwell/TomKit)
